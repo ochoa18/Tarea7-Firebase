@@ -10,7 +10,34 @@ import 'src/widgets.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
-
+Consumer<ApplicationState>(
+  builder: (context, appState, _) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      // Add from here...
+      switch (appState.attendees) {
+        1 => const Paragraph('1 person going'),
+        >= 2 => Paragraph('${appState.attendees} people going'),
+        _ => const Paragraph('No one going'),
+      },
+      // ...to here.
+      if (appState.loggedIn) ...[
+        // Add from here...
+        YesNoSelection(
+          state: appState.attending,
+          onSelection: (attending) => appState.attending = attending,
+        ),
+        // ...to here.
+        const Header('Discussion'),
+        GuestBook(
+          addMessage: (message) =>
+              appState.addMessageToGuestBook(message),
+          messages: appState.guestBookMessages,
+        ),
+      ],
+    ],
+  ),
+),
   @override
   Widget build(BuildContext context) {
     return Scaffold(
